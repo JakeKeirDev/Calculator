@@ -5,8 +5,7 @@ let operator = '';
 
 
 //Functions for addition, subtraction, multiplication and division.
-const add = function(x, y) {
-    
+const add = function(x, y) {   
     return(x + y);
 }
 
