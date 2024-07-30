@@ -1,7 +1,8 @@
-//Global variables for each number and the operator.
+//Global variables for display value for operation, each number and the operator.
 let firstNumber = 0;
 let secondNumber = 0;
 let operator = '';
+let displayValue = '';
 
 
 //Functions for addition, subtraction, multiplication and division.
@@ -35,3 +36,34 @@ const operate = function(firstNumber, operator, secondNumber) {
     else if (operator == '*') { multiply(firstNumber, secondNumber)}
     else {return ("Error - Operator unrecognised.")}
 }
+
+
+
+//Initial functionality for calculator display that updates depending on button click.
+const buttons = document.querySelectorAll('.button');
+const display = document.querySelector('.display');
+
+
+const populateDisplay = function(event) {
+    buttonValue = event.target.textContent;
+
+    if (buttonValue == 'C') {
+        displayValue = '0';
+    }
+    else if (buttonValue != '=') {
+        if (displayValue[0] == '0') {
+            displayValue = buttonValue;
+        } 
+        
+        else if (displayValue.length <= 10)
+        {
+            displayValue += buttonValue;
+        }
+        
+    }
+    display.textContent = displayValue;
+}
+
+buttons.forEach(button => {
+    button.addEventListener('click', populateDisplay);
+});
