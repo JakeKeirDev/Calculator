@@ -1,57 +1,45 @@
 // Global variables for display value for operation, each number and the operator.
+const display = document.querySelector('.display');
+const buttons = document.querySelectorAll('.button');
 let firstNumber = 0;
 let secondNumber = 0;
 let operator = '';
 let displayValue = '0';
 
 // Functions for addition, subtraction, multiplication and division.
-const add = function(x, y) {   
-    return(x + y);
-}
+const add = (x, y) => x + y;
+const subtract = (x, y) => x - y;
+const divide = (x, y) => y !== 0 ? x / y: 'Error'; //Error handling for division by zero.
+const multiply = (x, y) => x * y;
 
-const subtract = function(x, y) {
-    return(x - y);
-}
-
-const divide = function(x, y) {
-    return(x / y);
-}
-
-const multiply = function(x, y) {
-    return(x * y);
-}
-
-// Operate function initially checks if both parsed variables are numerical.
-// Calls add, subtract, divide, or multiply depending on the operator parsed.
-const operate = function(firstNumber, operator, secondNumber) {
-    if (typeof(firstNumber) !== "number" || typeof(secondNumber) !== "number") {
-        return "Error - non numerical input.";
+// Operate function to perform arithmetic based on operator.
+const operate = (firstNumber, operator, secondNumber) => {
+    switch (operator) {
+        case '+': return add(firstNumber, secondNumber);
+        case '-': return subtract(firstNumber, secondNumber);
+        case '/': return divide(firstNumber, secondNumber);
+        case '*': return multiply(firstNumber, secondNumber);
+        default: return('Error - unrecognised operator.');
     }
-    
-    if (operator == '+') { return add(firstNumber, secondNumber); }
-    else if (operator == '-') { return subtract(firstNumber, secondNumber); }
-    else if (operator == '/') { return divide(firstNumber, secondNumber); }
-    else if (operator == '*') { return multiply(firstNumber, secondNumber); }
-    else { return "Error - Operator unrecognised."; }
 }
 
 // Initial functionality for calculator display that updates depending on button click.
-const buttons = document.querySelectorAll('.button');
-const display = document.querySelector('.display');
 
-const populateDisplay = function(event) {
+
+// Define a function to update the display based on button clicks
+const populateDisplay = (event) => {
+    // Get the text content of the clicked button
     let buttonValue = event.target.textContent;
 
-    // if C is entered: display 0 and clear variables
+    // If C is entered: reset display and clear variables
     if (buttonValue == 'C') {
         displayValue = '0';
         firstNumber = 0;
         secondNumber = 0;
         operator = '';
     }
-
-    // if an operator is entered, check if firstNumber is empty. If so, put the displayValue into firstNumber and operator into operator then clear the displayValue.
-    else if ((buttonValue == '+' || buttonValue == '-' || buttonValue == '/' || buttonValue == '*')) {
+    // If an operator is entered, handle the operation logic.
+    else if (['+', '-', '/', '*'].includes(buttonValue)) {
         if (firstNumber === 0) {
             firstNumber = parseFloat(displayValue);
         } else if (operator !== '' && displayValue !== '0') {
@@ -61,21 +49,18 @@ const populateDisplay = function(event) {
         operator = buttonValue;
         displayValue = '0';
     }
-    // allows 0's if not the first number inputted.
+    // If '0' is clicked and display value is not '0', append '0' to display value
     else if (buttonValue == '0' && displayValue !== '0') {
         displayValue += buttonValue;
     }
-    // if numerical input and the current number is less than or equal to ten digits update display value.
-    // If the first number, clears the zero.
-    else if (buttonValue >= '0' && buttonValue <= '9' && displayValue.length <= 10) {
-        if (displayValue === '0') {
-            displayValue = buttonValue;
-        } else {
-            displayValue += buttonValue;
-        }
+    // Handle numerical input and update display value
+    else if (!isNaN(buttonValue) && displayValue.length <= 10) {
+        // If display value is '0', replace it with the button value
+        // Otherwise, append the button value to the display value
+        displayValue = displayValue === '0' ? buttonValue : displayValue + buttonValue;
     }
     // If equal is pressed and all required fields are filled, perform the operation.
-    else if (buttonValue == '=' && firstNumber !== 0 && operator !== '') {
+    else if (buttonValue === '=' && firstNumber !== 0 && operator) {
         secondNumber = parseFloat(displayValue);
         const result = operate(firstNumber, operator, secondNumber);
         displayValue = result.toString(); // Convert result to string
